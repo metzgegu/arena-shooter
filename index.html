@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Gamedev Canvas Workshop</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      canvas {
+        background: #eee;
+        display: block;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="width: 480px; height: 320px;">
+        <canvas id="myCanvas" width="1444" height="600"></canvas>
+        <button id="startGameButton">Start game</button><button id="stopGame"></button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+        let x = canvas.width / 2;
+        let y = 0;
+        const velocity = 3;
+        const jumpVelocity = 5;
+        const gravity = 0.1;
+        let dx = 0;
+        let dy = 0;
+        let rightPressed = false;
+        let leftPressed = false;
+        let onGround = false;
+        let loose = false;
+
+        const platformList = [{
+            x: canvas.offsetWidth / 2 - 150,
+            y: 100,
+            width: 300,
+            height: 10
+        }, {
+            x: 150,
+            y: 150,
+            width: 300,
+            height: 10
+        }, {
+            x: 200,
+            y: 400,
+            width: 300,
+            height: 10
+        }, {
+            x: 250,
+            y: 300,
+            width: 300,
+            height: 10
+        }, {
+            x: 300,
+            y: 200,
+            width: 300,
+            height: 10
+        }, {
+            x: 350,
+            y: 100,
+            width: 300,
+            height: 10
+        }, {
+            x: 400,
+            y: canvas.offsetHeight / 2 + 200,
+            width: 300,
+            height: 10
+        }];
+
+
+        function drawPlayer() {
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawPlatform(x, y, width, height) {
+            ctx.beginPath();
+            ctx.rect(x, y, width, height);
+            ctx.fillStyle = "#000000";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function floatCalcul(number) {
+            return Math.round(number * 1e2) / 1e2;
+        }
+
+        function draw() {
+            collisionCheck();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            console.log('loose', loose);
+
+            if (loose) {
+                ctx.font = "30px Arial";
+                ctx.fillText("You loose", canvas.width / 2 - 50, canvas.height / 2);
+                return;
+            }
+
+            drawPlayer();
+            platformList.forEach(platform => {
+                drawPlatform(platform.x, platform.y, platform.width, platform.height);
+            });
+            if (rightPressed) {
+                dx = velocity;
+            } else if (leftPressed) {
+                dx = -velocity;
+            } else {
+                if (dx > 0) {
+                    dx = Math.round((dx - 0.1) * 1e2) / 1e2;
+                } else if (dx < 0) {
+                    dx = Math.round((dx + 0.1) * 1e2) / 1e2;
+                } else {
+                    dx = 0;
+                }
+            }
+
+            console.log('onGround', onGround);
+
+            if (onGround) {
+                // dy = 0;
+            } else {
+                dy = floatCalcul(dy + gravity)
+            }
+
+            x += dx;
+            y += dy;
+        }
+
+        function jump() {
+            console.log('jump', onGround);
+            if (onGround) { // check if you're on the ground before jumping
+                dy = floatCalcul(-jumpVelocity); // set y velocity to a negative number to jump up.
+                y = floatCalcul(y - 1); // move the player up 1 pixel so they are no longer on the ground
+
+                onGround = false; // make so you cant jump again mid-air
+            }
+        }
+
+        function collisionCheck() {
+            if (y > canvas.offsetHeight - 10) {
+                // y = canvas.offsetHeight - 10
+                // onGround = true;
+                // dy = 0;
+                loose = true;
+            }
+
+            const platform = platformList.find(platform => {
+                if (x > platform.x && x < platform.x + platform.width && y >= platform.y - 10 && y < platform.y + 1 && dy >= 0) {
+                    if (!onGround) {
+                        
+                        y = platform.y - 10;
+                        dy = 0;
+                        
+                    }
+                    console.log('guillaume', y, platform.y - 10, platform.y + 1, dy)
+                    onGround = true;
+                    return true;
+                }
+            });
+
+            console.log('platform', platform);
+
+            if (!platform) {
+                onGround = false;
+            }
+        }
+
+        function downPlatform() {
+            if (onGround) {
+                y += 5;
+                dy = 1
+            }
+        }
+
+        function keyDownHandler(e) {
+            if (e.key === "Right" || e.key === "ArrowRight") {
+                rightPressed = true;
+            } else if (e.key === "Left" || e.key === "ArrowLeft") {
+                leftPressed = true;
+            } else if (e.key === "Up" || e.key === "ArrowUp") {
+                jump();
+            } else if (e.key === "Down" || e.key === "ArrowDown") {
+                downPlatform();
+            }
+        }
+
+        function keyUpHandler(e) {
+            if (e.key === "Right" || e.key === "ArrowRight") {
+                rightPressed = false;
+            } else if (e.key === "Left" || e.key === "ArrowLeft") {
+                leftPressed = false;
+            }
+        }
+
+
+        document.getElementById("startGameButton").addEventListener("click", () => {
+            setInterval(draw, 10);
+        });
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
+
+    </script>
+  </body>
+</html>
