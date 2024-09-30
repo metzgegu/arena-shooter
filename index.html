@@ -15,6 +15,7 @@
       }
     </style>
     <script src="./player.js"></script>
+    <script src="./fireManager.js"></script>
   </head>
   <body>
     <div style="width: 480px; height: 320px;">
@@ -28,8 +29,6 @@
         const velocity = 3;
         const jumpVelocity = 5;
         const gravity = 0.1;
-        let rightPressed = false;
-        let leftPressed = false;
         let loose = false;
         const playerWidth = 20;
 
@@ -65,15 +64,18 @@
             height: 10
         }];
 
-        const player = new Player({ positionX: canvas.width / 2, positionY:0, size: 10, color: "#0095DD", ctx, jumpVelocity, velocity, gravity, canvas });
+        const fireManager = new FireManager({ ctx, canvas });
+
+        const player = new Player({ positionX: canvas.width / 2, positionY:0, size: 10, color: "#0095DD", ctx, jumpVelocity, velocity, gravity, canvas, fireManager });
         player.setPlatformList(platformList);
-        const player2 = new Player({ positionX: canvas.width / 4, positionY:0, size: 10, color: "red", ctx, jumpVelocity, velocity, gravity, canvas });
+        const player2 = new Player({ positionX: canvas.width / 4, positionY:0, size: 10, color: "red", ctx, jumpVelocity, velocity, gravity, canvas, fireManager });
         player2.setPlatformList(platformList);
         player2.initControls({
             right: ["d"],
             left: ["q"],
             up: ["z"],
-            down: ["s"]
+            down: ["s"],
+            fire: ["c"]
         });
 
         const players = [player, player2];
@@ -106,7 +108,7 @@
             //     displayLoose();
             //     return;
             // }
-            
+            fireManager.draw()
             drawPlayer();
             platformList.forEach(platform => {
                 drawPlatform(platform.x, platform.y, platform.width, platform.height);

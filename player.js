@@ -1,5 +1,5 @@
 class Player {
-    constructor({ positionX, positionY, size, color, ctx, jumpVelocity, velocity, gravity, canvas }) {
+    constructor({ positionX, positionY, size, color, ctx, jumpVelocity, velocity, gravity, canvas, fireManager }) {
         this.x = positionX;
         this.y = positionY;
         this.size = size;
@@ -18,9 +18,12 @@ class Player {
             left: ["Left", "ArrowLeft"],
             up: ["Up", "ArrowUp"],
             down: ["Down", "ArrowDown"],
+            fire: ["p"]
         }
         this.platformList = [];
         this.canvas = canvas;
+        this.directionRight = true;
+        this.fireManager = fireManager;
     }
 
     setPlatformList(platformList) {
@@ -55,6 +58,7 @@ class Player {
         this.ctx.arc(this.x, this.y, playerWidth, 0, Math.PI * 2);
         this.ctx.fillStyle = this.color;
         this.ctx.fill();
+        this.ctx.fillText('🔫', this.x, this.y)
         this.ctx.closePath();
         this.computeDirection();
     }
@@ -66,11 +70,9 @@ class Player {
 
         const platform = this.platformList.find(platform => {
             if (this.x > platform.x && this.x < platform.x + platform.width && this.y >= platform.y - playerWidth && this.y < platform.y + 1 && this.dy >= 0) {
-                if (!this.onGround) {
-                    
+                if (!this.onGround) {         
                     this.setY(platform.y - playerWidth);
-                    this.setDy(0)
-                    
+                    this.setDy(0)        
                 }
                 this.setOnGround(true);
                 return true;
@@ -112,12 +114,13 @@ class Player {
         return Math.round(number * 1e2) / 1e2;
     }
 
-    initControls({ right, left, up, down, }) {
+    initControls({ right, left, up, down, fire }) {
         this.controls = {
             right,
             left,
             up,
             down,
+            fire,
         }
     }
 
@@ -137,15 +140,19 @@ class Player {
         }
     }
 
-    keyDownHandler(e) {
+    keyDownHandler(e) { 
         if (this.controls.right.includes(e.key)) {
             this.rightPressed = true;
+            this.directionRight = true;
         } else if (this.controls.left.includes(e.key)) {
             this.leftPressed = true;
+            this.directionRight = false;
         } else if (this.controls.up.includes(e.key)) {
             this.jump();
         } else if (this.controls.down.includes(e.key)) {
             this.down();
+        } else if (this.controls.fire.includes(e.key)) {
+            this.fireManager.fire({ x: this.x, y: this.y, directionRight: this.directionRight })
         }
     }
 
