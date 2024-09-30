@@ -1,5 +1,5 @@
 class Player {
-    constructor({ positionX, positionY, size, color, ctx, jumpVelocity, velocity, gravity }) {
+    constructor({ positionX, positionY, size, color, ctx, jumpVelocity, velocity, gravity, canvas }) {
         this.x = positionX;
         this.y = positionY;
         this.size = size;
@@ -11,6 +11,20 @@ class Player {
         this.jumpVelocity = jumpVelocity;
         this.velocity = velocity;
         this.gravity = gravity;
+        this.rightPressed = false;
+        this.leftPressed = false;
+        this.controls = {
+            right: ["Right", "ArrowRight"],
+            left: ["Left", "ArrowLeft"],
+            up: ["Up", "ArrowUp"],
+            down: ["Down", "ArrowDown"],
+        }
+        this.platformList = [];
+        this.canvas = canvas;
+    }
+
+    setPlatformList(platformList) {
+        this.platformList = platformList;
     }
 
     setOnGround(onGround) {
@@ -34,11 +48,38 @@ class Player {
     }
 
     draw() {
+        this.collisionCheck();
+        this.computeGravityVelocity();
+        this.computePosition();
         this.ctx.beginPath();
         this.ctx.arc(this.x, this.y, playerWidth, 0, Math.PI * 2);
         this.ctx.fillStyle = this.color;
         this.ctx.fill();
         this.ctx.closePath();
+        this.computeDirection();
+    }
+
+    collisionCheck() {
+        if (this.y > this.canvas.offsetHeight - this.size) {
+            loose = true;
+        }
+
+        const platform = this.platformList.find(platform => {
+            if (this.x > platform.x && this.x < platform.x + platform.width && this.y >= platform.y - playerWidth && this.y < platform.y + 1 && this.dy >= 0) {
+                if (!this.onGround) {
+                    
+                    this.setY(platform.y - playerWidth);
+                    this.setDy(0)
+                    
+                }
+                this.setOnGround(true);
+                return true;
+            }
+        });
+
+        if (!platform) {
+            this.setOnGround(false);
+        }
     }
 
     jump() {
@@ -69,5 +110,50 @@ class Player {
 
     floatCalcul(number) {
         return Math.round(number * 1e2) / 1e2;
+    }
+
+    initControls({ right, left, up, down, }) {
+        this.controls = {
+            right,
+            left,
+            up,
+            down,
+        }
+    }
+
+    computeDirection() {
+        if (this.rightPressed) {
+            this.setDx(velocity);
+        } else if (this.leftPressed) {
+            this.setDx(-velocity);
+        } else {
+            if (this.dx > 0) {
+                this.setDx(Math.round((this.dx - 0.1) * 1e2) / 1e2);
+            } else if (this.dx < 0) {
+                this.setDx(Math.round((this.dx + 0.1) * 1e2) / 1e2);
+            } else {
+                this.setDx(0);
+            }
+        }
+    }
+
+    keyDownHandler(e) {
+        if (this.controls.right.includes(e.key)) {
+            this.rightPressed = true;
+        } else if (this.controls.left.includes(e.key)) {
+            this.leftPressed = true;
+        } else if (this.controls.up.includes(e.key)) {
+            this.jump();
+        } else if (this.controls.down.includes(e.key)) {
+            this.down();
+        }
+    }
+
+    keyUpHandler(e) {
+        if (this.controls.right.includes(e.key)) {
+            this.rightPressed = false;
+        } else if (this.controls.left.includes(e.key)) {
+            this.leftPressed = false;
+        }
     }
 }

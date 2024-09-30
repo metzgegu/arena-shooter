@@ -31,7 +31,7 @@
         let rightPressed = false;
         let leftPressed = false;
         let loose = false;
-        const playerWidth = 10;
+        const playerWidth = 20;
 
         const platformList = [{
             x: canvas.offsetWidth / 2 - 150,
@@ -46,7 +46,7 @@
         }, {
             x: 200,
             y: 400,
-            width: 300,
+            width: 700,
             height: 10
         }, {
             x: 250,
@@ -56,26 +56,30 @@
         }, {
             x: 300,
             y: 200,
-            width: 300,
-            height: 10
-        }, {
-            x: 350,
-            y: 100,
-            width: 300,
+            width: 600,
             height: 10
         }, {
             x: 400,
             y: canvas.offsetHeight / 2 + 200,
-            width: 300,
+            width: 400,
             height: 10
         }];
 
-        const player = new Player({ positionX: canvas.width / 2, positionY:0, size: 10, color: "#0095DD", ctx, jumpVelocity, velocity, gravity });
+        const player = new Player({ positionX: canvas.width / 2, positionY:0, size: 10, color: "#0095DD", ctx, jumpVelocity, velocity, gravity, canvas });
+        player.setPlatformList(platformList);
+        const player2 = new Player({ positionX: canvas.width / 4, positionY:0, size: 10, color: "red", ctx, jumpVelocity, velocity, gravity, canvas });
+        player2.setPlatformList(platformList);
+        player2.initControls({
+            right: ["d"],
+            left: ["q"],
+            up: ["z"],
+            down: ["s"]
+        });
+
+        const players = [player, player2];
         
         function drawPlayer() {
-            player.computeGravityVelocity();
-            player.computePosition();
-            player.draw();
+            players.forEach(player => player.draw());
         }
 
         function drawPlatform(x, y, width, height) {
@@ -96,84 +100,35 @@
         }
 
         function draw() {
-            collisionCheck();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (loose) {
-                displayLoose();
-                return;
-            }
+            // if (loose) {
+            //     displayLoose();
+            //     return;
+            // }
             
             drawPlayer();
             platformList.forEach(platform => {
                 drawPlatform(platform.x, platform.y, platform.width, platform.height);
             });
-            
-            if (rightPressed) {
-                player.setDx(velocity);
-            } else if (leftPressed) {
-                player.setDx(-velocity);
-            } else {
-                if (player.dx > 0) {
-                    player.setDx(Math.round((player.dx - 0.1) * 1e2) / 1e2);
-                } else if (player.dx < 0) {
-                    player.setDx(Math.round((player.dx + 0.1) * 1e2) / 1e2);
-                } else {
-                    player.setDx(0);
-                }
-            }
-        }
-
-        function collisionCheck() {
-            if (player.y > canvas.offsetHeight - playerWidth) {
-                loose = true;
-            }
-
-            const platform = platformList.find(platform => {
-                if (player.x > platform.x && player.x < platform.x + platform.width && player.y >= platform.y - playerWidth && player.y < platform.y + 1 && player.dy >= 0) {
-                    if (!player.onGround) {
-                        
-                        player.setY(platform.y - playerWidth);
-                        player.setDy(0)
-                        
-                    }
-                    player.setOnGround(true);
-                    return true;
-                }
-            });
-
-            if (!platform) {
-                player.setOnGround(false);
-            }
         }
 
         function keyDownHandler(e) {
-            if (e.key === "Right" || e.key === "ArrowRight") {
-                rightPressed = true;
-            } else if (e.key === "Left" || e.key === "ArrowLeft") {
-                leftPressed = true;
-            } else if (e.key === "Up" || e.key === "ArrowUp") {
-                player.jump();
-            } else if (e.key === "Down" || e.key === "ArrowDown") {
-                player.down();
-            }
+            
+            players.forEach(player => player.keyDownHandler(e));
         }
 
         function keyUpHandler(e) {
-            if (e.key === "Right" || e.key === "ArrowRight") {
-                rightPressed = false;
-            } else if (e.key === "Left" || e.key === "ArrowLeft") {
-                leftPressed = false;
-            }
+            console.log("key up", e.key);
+            players.forEach(player => player.keyUpHandler(e));
         }
 
-
         document.getElementById("startGameButton").addEventListener("click", () => {
+            console.log("start game");
             setInterval(draw, 10);
         });
         document.addEventListener("keydown", keyDownHandler, false);
         document.addEventListener("keyup", keyUpHandler, false);
-
     </script>
   </body>
 </html>
