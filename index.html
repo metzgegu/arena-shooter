@@ -14,27 +14,29 @@
         margin: 0 auto;
       }
     </style>
+    <script src="./player.js"></script>
   </head>
   <body>
     <div style="width: 480px; height: 320px;">
         <canvas id="myCanvas" width="1444" height="600"></canvas>
-        <button id="startGameButton">Start game</button><button id="stopGame"></button>
+        <button id="startGameButton">Start game</button>
     </div>
 
     <script>
         const canvas = document.getElementById("myCanvas");
         const ctx = canvas.getContext("2d");
-        let x = canvas.width / 2;
-        let y = 0;
+        // let x = canvas.width / 2;
+        // let y = 0;
         const velocity = 3;
         const jumpVelocity = 5;
         const gravity = 0.1;
-        let dx = 0;
-        let dy = 0;
+        // let dx = 0;
+        // let dy = 0;
         let rightPressed = false;
         let leftPressed = false;
         let onGround = false;
         let loose = false;
+        const playerWidth = 10;
 
         const platformList = [{
             x: canvas.offsetWidth / 2 - 150,
@@ -73,13 +75,10 @@
             height: 10
         }];
 
-
+        const player = new Player({ positionX: canvas.width / 2, positionY:0, size: 10, color: "#0095DD", ctx })
+        
         function drawPlayer() {
-            ctx.beginPath();
-            ctx.arc(x, y, 10, 0, Math.PI * 2);
-            ctx.fillStyle = "#0095DD";
-            ctx.fill();
-            ctx.closePath();
+            player.draw();
         }
 
         function drawPlatform(x, y, width, height) {
@@ -94,80 +93,72 @@
             return Math.round(number * 1e2) / 1e2;
         }
 
+        function displayLoose() {
+            ctx.font = "30px Arial";
+            ctx.fillText("You loose", canvas.width / 2 - 50, canvas.height / 2);
+        }
+
         function draw() {
             collisionCheck();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            console.log('loose', loose);
 
             if (loose) {
-                ctx.font = "30px Arial";
-                ctx.fillText("You loose", canvas.width / 2 - 50, canvas.height / 2);
+                displayLoose();
                 return;
             }
-
             drawPlayer();
             platformList.forEach(platform => {
                 drawPlatform(platform.x, platform.y, platform.width, platform.height);
             });
             if (rightPressed) {
-                dx = velocity;
+                player.setDx(velocity);
             } else if (leftPressed) {
-                dx = -velocity;
+                player.setDx(-velocity);
             } else {
-                if (dx > 0) {
-                    dx = Math.round((dx - 0.1) * 1e2) / 1e2;
-                } else if (dx < 0) {
-                    dx = Math.round((dx + 0.1) * 1e2) / 1e2;
+                if (player.dx > 0) {
+                    player.setDx(Math.round((player.dx - 0.1) * 1e2) / 1e2);
+                } else if (player.dx < 0) {
+                    player.setDx(Math.round((player.dx + 0.1) * 1e2) / 1e2);
                 } else {
-                    dx = 0;
+                    player.setDx(0);
                 }
             }
 
-            console.log('onGround', onGround);
-
-            if (onGround) {
-                // dy = 0;
-            } else {
-                dy = floatCalcul(dy + gravity)
+            if (!onGround) {
+                player.setDy(floatCalcul(player.dy + gravity))
             }
 
-            x += dx;
-            y += dy;
+            // new x and y en fonction de dx et dy
+            player.setX(player.x + player.dx);
+            player.setY(player.y + player.dy);
         }
 
         function jump() {
-            console.log('jump', onGround);
             if (onGround) { // check if you're on the ground before jumping
-                dy = floatCalcul(-jumpVelocity); // set y velocity to a negative number to jump up.
-                y = floatCalcul(y - 1); // move the player up 1 pixel so they are no longer on the ground
+                player.setDy(floatCalcul(-jumpVelocity)); // set y velocity to a negative number to jump up.
+                player.setY(floatCalcul(player.y - 1)); // move the player up 1 pixel so they are no longer on the ground
 
                 onGround = false; // make so you cant jump again mid-air
             }
         }
 
         function collisionCheck() {
-            if (y > canvas.offsetHeight - 10) {
-                // y = canvas.offsetHeight - 10
-                // onGround = true;
-                // dy = 0;
+            if (player.y > canvas.offsetHeight - playerWidth) {
                 loose = true;
             }
 
             const platform = platformList.find(platform => {
-                if (x > platform.x && x < platform.x + platform.width && y >= platform.y - 10 && y < platform.y + 1 && dy >= 0) {
+                if (player.x > platform.x && player.x < platform.x + platform.width && player.y >= platform.y - playerWidth && player.y < platform.y + 1 && player.dy >= 0) {
                     if (!onGround) {
                         
-                        y = platform.y - 10;
-                        dy = 0;
+                        player.setY(platform.y - playerWidth);
+                        player.setDy(0)
                         
                     }
-                    console.log('guillaume', y, platform.y - 10, platform.y + 1, dy)
                     onGround = true;
                     return true;
                 }
             });
-
-            console.log('platform', platform);
 
             if (!platform) {
                 onGround = false;
@@ -176,8 +167,8 @@
 
         function downPlatform() {
             if (onGround) {
-                y += 5;
-                dy = 1
+                player.setY(player.y + 5);
+                player.setDy(1);
             }
         }
 
