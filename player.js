@@ -1,5 +1,5 @@
 class Player {
-    constructor({ positionX, positionY, size, color, ctx, jumpVelocity, velocity, gravity, canvas, fireManager }) {
+    constructor({ name, positionX, positionY, size, color, ctx, jumpVelocity, velocity, gravity, canvas, fireManager }) {
         this.x = positionX;
         this.y = positionY;
         this.size = size;
@@ -24,6 +24,7 @@ class Player {
         this.canvas = canvas;
         this.directionRight = true;
         this.fireManager = fireManager;
+        this.name = name;
     }
 
     setPlatformList(platformList) {
@@ -51,6 +52,7 @@ class Player {
     }
 
     draw() {
+        this.collisionWithFireCheck()
         this.collisionCheck();
         this.computeGravityVelocity();
         this.computePosition();
@@ -63,9 +65,18 @@ class Player {
         this.computeDirection();
     }
 
+    collisionWithFireCheck() {
+        const firesTouchingMe = this.fireManager.getFireTouchingMe(this);
+
+        if (firesTouchingMe) {
+            this.fireManager.removeFire(firesTouchingMe);
+            firesTouchingMe.directionRight ? this.setDx(2) : this.setDx(-2);
+        }
+    }
+
     collisionCheck() {
         if (this.y > this.canvas.offsetHeight - this.size) {
-            loose = true;
+            this.loose = true;
         }
 
         const platform = this.platformList.find(platform => {
