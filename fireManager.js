@@ -26,7 +26,7 @@ class FireManager {
 
     getFireTouchingMe(player) {
         return this.fireList.find(fire => {
-            return fire.x > player.x - player.size && fire.x < player.x + player.size && fire.y > player.y - (player.size * 2) && fire.y < player.y + (player.size * 2);
+            return fire.x > player.x - player.size / 2 && fire.x < player.x + player.size / 2 && fire.y > player.y - player.size && fire.y < player.y + player.size;
         });
     }
 }

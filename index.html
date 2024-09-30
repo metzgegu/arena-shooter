@@ -29,9 +29,7 @@
         const velocity = 3;
         const jumpVelocity = 5;
         const gravity = 0.15;
-        let loose = false;
         const playerWidth = 20;
-
         const platformList = [{
             x: canvas.offsetWidth / 2 - 150,
             y: 100,
@@ -71,9 +69,9 @@
 
         const fireManager = new FireManager({ ctx, canvas });
 
-        const player = new Player({ name: 'Player Blue', positionX: canvas.width / 2, positionY:0, size: 10, color: "#0095DD", ctx, jumpVelocity, velocity, gravity, canvas, fireManager });
+        const player = new Player({ name: 'Player Blue', positionX: canvas.width / 2, positionY:0, size: playerWidth, color: "#0095DD", ctx, jumpVelocity, velocity, gravity, canvas, fireManager });
         player.setPlatformList(platformList);
-        const player2 = new Player({ name: 'Player Red', positionX: canvas.width / 4, positionY:0, size: 10, color: "red", ctx, jumpVelocity, velocity, gravity, canvas, fireManager });
+        const player2 = new Player({ name: 'Player Red', positionX: canvas.width / 4, positionY:0, size: playerWidth, color: "red", ctx, jumpVelocity, velocity, gravity, canvas, fireManager });
         player2.setPlatformList(platformList);
         player2.initControls({
             right: ["d"],

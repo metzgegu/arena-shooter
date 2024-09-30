@@ -57,7 +57,7 @@ class Player {
         this.computeGravityVelocity();
         this.computePosition();
         this.ctx.beginPath();
-        this.ctx.arc(this.x, this.y, playerWidth, 0, Math.PI * 2);
+        this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         this.ctx.fillStyle = this.color;
         this.ctx.fill();
         this.ctx.fillText('🔫', this.x, this.y)
@@ -80,9 +80,9 @@ class Player {
         }
 
         const platform = this.platformList.find(platform => {
-            if (this.x > platform.x && this.x < platform.x + platform.width && this.y >= platform.y - playerWidth && this.y < platform.y + 1 && this.dy >= 0) {
+            if (this.x > platform.x && this.x < platform.x + platform.width && this.y >= platform.y - this.size && this.y < platform.y + 1 && this.dy >= 0) {
                 if (!this.onGround) {         
-                    this.setY(platform.y - playerWidth);
+                    this.setY(platform.y - this.size);
                     this.setDy(0)        
                 }
                 this.setOnGround(true);
