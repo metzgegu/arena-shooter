@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Arena shooter</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      canvas {
+        background: #eee;
+        display: block;
+        margin: 0 auto;
+      }
+    </style>
+    <script src="./src/player.js"></script>
+    <script src="./src/fireManager.js"></script>
+    <script src="./src/game.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Arena Shooter</h1>
+    <div style="width: 1444px; height: 600px;">
+        <canvas id="myCanvas" width="1444" height="600"></canvas>
+        <button id="startGameButton">Start game</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+        const velocity = 3;
+        const jumpVelocity = 5;
+        const gravity = 0.1;
+        const playerWidth = 20;
+        const platformList = [{
+            x: canvas.offsetWidth / 2 - 150,
+            y: 100,
+            width: 300,
+            height: 10
+        }, {
+            x: 150,
+            y: 150,
+            width: 300,
+            height: 10
+        }, {
+            x: 200,
+            y: 400,
+            width: 700,
+            height: 10
+        }, {
+            x: 250,
+            y: 300,
+            width: 300,
+            height: 10
+        }, {
+            x: 1000,
+            y: 400,
+            width: 300,
+            height: 10
+        }, {
+            x: 300,
+            y: 200,
+            width: 600,
+            height: 10
+        }, {
+            x: 400,
+            y: canvas.offsetHeight / 2 + 200,
+            width: 400,
+            height: 10
+        }];
+
+        const setupGame = () => {
+            const game = new Game({ ctx, canvas });
+            if (gameId) clearInterval(gameId);
+            gameId = setInterval(() => game.draw(), 10);
+
+            document.addEventListener("keydown", (e) => game.keyDownHandler(e), false);
+            document.addEventListener("keyup", (e) => game.keyUpHandler(e), false);
+        }
+
+        let gameId
+
+        document.getElementById("startGameButton").addEventListener("click", () => {
+            setupGame();
+        });
+    </script>
+  </body>
+</html>

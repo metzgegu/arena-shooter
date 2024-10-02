@@ -54,13 +54,14 @@ class Player {
     draw() {
         this.collisionWithFireCheck()
         this.collisionCheck();
-        this.computeGravityVelocity();
+        this.computeGravityVelocity(); // compute gravity velocity
         this.computePosition();
         this.ctx.beginPath();
         this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         this.ctx.fillStyle = this.color;
         this.ctx.fill();
-        this.ctx.fillText('🔫', this.x, this.y)
+        this.ctx.fillText('🔫', this.x - 10, this.y + 15)
+        this.ctx.font = "30px Georgia";
         this.ctx.closePath();
         this.computeDirection();
     }
@@ -97,8 +98,8 @@ class Player {
 
     jump() {
         if (this.onGround) { // check if you're on the ground before jumping
-            this.setDy(floatCalcul(-this.jumpVelocity)); // set y velocity to a negative number to jump up.
-            this.setY(floatCalcul(this.y - 1)); // move the player up 1 pixel so they are no longer on the ground
+            this.setDy(this.floatCalcul(-this.jumpVelocity)); // set y velocity to a negative number to jump up.
+            this.setY(this.floatCalcul(this.y - 1)); // move the player up 1 pixel so they are no longer on the ground
             this.setOnGround(false); // make so you cant jump again mid-air
         }
     }
@@ -117,7 +118,7 @@ class Player {
 
     computeGravityVelocity() {
         if (!this.onGround) {
-            this.setDy(floatCalcul(this.dy + this.gravity))
+            this.setDy(this.floatCalcul(this.dy + this.gravity))
         }
     }
 
