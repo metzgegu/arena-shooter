@@ -1,3 +1,5 @@
+const FIRE_FORCE = 4
+
 class Player {
     constructor({ name, positionX, positionY, size, color, ctx, jumpVelocity, velocity, gravity, canvas, fireManager }) {
         this.x = positionX;
@@ -25,6 +27,15 @@ class Player {
         this.directionRight = true;
         this.fireManager = fireManager;
         this.name = name;
+
+        this.gunSpriteLeft = new Image();
+        this.gunSpriteLeft.src = "./src/sprites/left_gun.png";
+        this.gunSpriteLeft.onload = () => {
+            this.ctx.drawImage(this.gunSpriteLeft, this.x, this.y, 20, 20);
+        };
+
+        this.gunSpriteRight = new Image();
+        this.gunSpriteRight.src = "./src/sprites/right_gun.png";
     }
 
     setPlatformList(platformList) {
@@ -60,8 +71,11 @@ class Player {
         this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         this.ctx.fillStyle = this.color;
         this.ctx.fill();
-        this.ctx.fillText('🔫', this.x - 10, this.y + 15)
-        this.ctx.font = "30px Georgia";
+        if (this.directionRight) {
+            this.ctx.drawImage(this.gunSpriteRight, this.x - 15, this.y - 7, 25, 25)
+        } else {
+            this.ctx.drawImage(this.gunSpriteLeft, this.x - 10, this.y - 7, 25 , 25)
+        }
         this.ctx.closePath();
         this.computeDirection();
     }
@@ -71,7 +85,7 @@ class Player {
 
         if (firesTouchingMe) {
             this.fireManager.removeFire(firesTouchingMe);
-            firesTouchingMe.directionRight ? this.setDx(2) : this.setDx(-2);
+            firesTouchingMe.directionRight ? this.setDx(FIRE_FORCE) : this.setDx(-FIRE_FORCE);
         }
     }
 
