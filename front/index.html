@@ -20,49 +20,58 @@
     <script src="./src/singlePlayerGame.js"></script>
     <script src="./src/menu.js"></script>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div style="width: 1444px; height: 600px; position: relative;">
-        <canvas id="game__canvas" width="1444" height="600"></canvas>
-        <div id="game__menu">
-          <h1>Game Menu</h1>
-          <ul>
-            <li>
-              <button id="game__menu__action__resume">Resume</button>
-            </li>
-            <li>
-              <button id="game__menu__action__restart">Restart</button>
-            </li>
-            <li>
-              <button id="game__menu__action__quit">Quit</button>
-            </li>
-          </ul>
-        </div>
-        <div id="menu">
-          <h1>Arena Shooter</h1>
-          <ul>
-            <li>
-              <button id="menu__action__single-game">Start a single player game</button>
-            </li>
+    <div style="width: 1444px; height: 600px; position: relative">
+      <canvas id="game__canvas" width="1444" height="600"></canvas>
+      <div id="game__menu">
+        <h1>Game Menu</h1>
+        <ul>
+          <li>
+            <button id="game__menu__action__resume">Resume</button>
+          </li>
+          <li>
+            <button id="game__menu__action__restart">Restart</button>
+          </li>
+          <li>
+            <button id="game__menu__action__quit">Quit</button>
+          </li>
+        </ul>
+      </div>
+      <div id="menu">
+        <h1>Arena Shooter</h1>
+        <ul>
+          <li>
+            <button id="menu__action__single-game">
+              Start a single player game
+            </button>
+          </li>
 
-            <li>
-              <button id="menu__action__multi-game" disabled>Start a multiplayer game</button>
-            </li>
-          </ul>
-          
-        </div>
+          <li>
+            <button id="menu__action__multi-game" disabled>
+              Start a multiplayer game
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <script>
-        const gameCanvas = document.getElementById("game__canvas");
-        gameCanvas.style.display = "none";
-        const gameMenu = document.getElementById("game__menu");
-        gameMenu.style.display = "none";
-        const gameContext = gameCanvas.getContext("2d");
-        const menu = document.getElementById("menu");
+      const gameCanvas = document.getElementById("game__canvas");
+      gameCanvas.style.display = "none";
+      const gameMenu = document.getElementById("game__menu");
+      gameMenu.style.display = "none";
+      const gameContext = gameCanvas.getContext("2d");
+      const menu = document.getElementById("menu");
 
-        const menuInstance = new Menu({ menu, gameCanvas, gameMenu, gameContext, document });
+      const menuInstance = new Menu({
+        menu,
+        gameCanvas,
+        gameMenu,
+        gameContext,
+        document,
+      });
     </script>
   </body>
 </html>
