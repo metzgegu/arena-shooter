@@ -40,25 +40,13 @@ const platformList = [{
 }];
 
 class Game {
-    constructor({ canvas, ctx,}) {
+    constructor({ canvas, ctx }) {
         this.canvas = canvas
         this.ctx = ctx
 
         this.fireManager = new FireManager({ ctx, canvas });
 
-        this.player = new Player({ name: 'Player Blue', positionX: this.canvas.width / 2, positionY: 0, size: playerWidth, color: "#0095DD", ctx: this.ctx, jumpVelocity, velocity, gravity, canvas: this.canvas, fireManager: this.fireManager });
-        this.player.setPlatformList(platformList);
-        this.player2 = new Player({ name: 'Player Red', positionX: this.canvas.width / 4, positionY: 0, size: playerWidth, color: "red", ctx: this.ctx, jumpVelocity, velocity, gravity, canvas: this.canvas, fireManager: this.fireManager });
-        this.player2.setPlatformList(platformList);
-        this.player2.initControls({
-            right: ["d"],
-            left: ["q"],
-            up: ["z"],
-            down: ["s"],
-            fire: ["c"]
-        });
-
-        this.players = [this.player, this.player2];
+        this.players = [];
     }
     
     drawPlayer() {

@@ -17,6 +17,7 @@
     <script src="./src/player.js"></script>
     <script src="./src/fireManager.js"></script>
     <script src="./src/game.js"></script>
+    <script src="./src/singlePlayerGame.js"></script>
 
     <link rel="stylesheet" href="style.css">
   </head>
@@ -32,7 +33,7 @@
         const ctx = canvas.getContext("2d");
 
         const setupGame = () => {
-            const game = new Game({ ctx, canvas });
+            const game = new SinglePlayerGame({ ctx, canvas });
             if (gameId) clearInterval(gameId);
             gameId = setInterval(() => game.draw(), 10);
 

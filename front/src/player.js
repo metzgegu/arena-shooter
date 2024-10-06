@@ -1,7 +1,7 @@
 const FIRE_FORCE = 4
 
 class Player {
-    constructor({ name, positionX, positionY, size, color, ctx, jumpVelocity, velocity, gravity, canvas, fireManager }) {
+    constructor({ name, positionX, positionY, size, color, ctx, canvas }) {
         this.x = positionX;
         this.y = positionY;
         this.size = size;
@@ -25,7 +25,6 @@ class Player {
         this.platformList = [];
         this.canvas = canvas;
         this.directionRight = true;
-        this.fireManager = fireManager;
         this.name = name;
 
         this.gunSpriteLeft = new Image();
@@ -36,6 +35,16 @@ class Player {
 
         this.gunSpriteRight = new Image();
         this.gunSpriteRight.src = "./src/sprites/right_gun.png";
+    }
+
+    setGameConfig({ jumpVelocity, velocity, gravity }) {
+        this.jumpVelocity = jumpVelocity;
+        this.velocity = velocity;
+        this.gravity = gravity;
+    }
+
+    setFireManager(fireManager) {
+        this.fireManager = fireManager;
     }
 
     setPlatformList(platformList) {
