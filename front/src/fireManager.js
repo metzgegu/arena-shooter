@@ -6,6 +6,10 @@ class FireManager {
         this.fireVelocity = 10
     }
 
+    reset() {
+        this.fireList = [];
+    }
+
     draw() {
         this.fireList.forEach(fire => {
             this.ctx.beginPath();

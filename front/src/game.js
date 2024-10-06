@@ -43,10 +43,15 @@ class Game {
     constructor({ canvas, ctx }) {
         this.canvas = canvas
         this.ctx = ctx
+        this.gamePaused = false
 
         this.fireManager = new FireManager({ ctx, canvas });
 
         this.players = [];
+    }
+
+    setGamePaused(gamePaused) {
+        this.gamePaused = gamePaused;
     }
     
     drawPlayer() {
@@ -71,6 +76,7 @@ class Game {
     }
 
     draw() {
+        if (this.gamePaused) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         const loosingPlayer = this.players.find(player => player.loose)
@@ -88,6 +94,8 @@ class Game {
     }
 
     keyDownHandler(e) {
+        if (this.gamePaused) return;
+
         this.players.forEach(player => player.keyDownHandler(e));
     }
 

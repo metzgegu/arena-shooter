@@ -2,6 +2,10 @@ class SinglePlayerGame extends Game {
     constructor({ canvas, ctx }) {
         super({ canvas, ctx });
 
+        this.start();
+    }
+
+    start() {
         this.player = new Player({ name: 'Player Blue', positionX: this.canvas.width / 2, positionY: 0, size: playerWidth, color: "#0095DD", ctx: this.ctx, canvas: this.canvas });
         this.player.setGameConfig({ jumpVelocity, velocity, gravity });
         this.player.setPlatformList(platformList);
@@ -19,5 +23,10 @@ class SinglePlayerGame extends Game {
         });
 
         this.players = [this.player, this.player2];
+    }
+
+    restart() {
+        this.fireManager.reset();
+        this.start();
     }
 }
